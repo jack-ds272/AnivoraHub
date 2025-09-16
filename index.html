@@ -1,61 +1,89 @@
 <!DOCTYPE html>
 <html lang="ru">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>AnivoraHub — Аниме онлайн</title>
-<link rel="stylesheet" href="style.css">
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>AnivoraHub — Аниме онлайн</title>
+  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
 <body>
-<header>
-  <div class="logo">AnivoraHub</div>
-  <div class="header-buttons">
-    <button id="optionsBtn" class="menu-btn"><i class="fa-solid fa-gear"></i> Опции</button>
-    <div id="optionsPanel" class="options-panel">
-      <button class="options-btn" id="themeBtn"><i class="fa-solid fa-moon"></i> Тема</button>
-      <button class="options-btn" id="catalogBtn">Каталог</button>
-      <button class="options-btn" id="favoritesBtn">Избранное</button>
-    </div>
+  <!-- Прелоадер -->
+  <div id="preloader">
+    <div class="loader"></div>
   </div>
-</header>
 
-<main>
-  <div class="player-section">
-    <div class="video-container">
-      <iframe 
-        src="https://vk.com/video_ext.php?oid=-221135691&id=456239325&hd=2&autoplay=1" 
-        allow="autoplay; encrypted-media; fullscreen; picture-in-picture; screen-wake-lock" 
-        allowfullscreen>
-      </iframe>
-    </div>
-    <div class="anime-info">
-      <div class="info-text">
-        <h3 class="anime-title">Re:Zero — Сезон 1</h3>
-        <p class="anime-description">История Субару Нацуки, который оказывается в новом мире и сталкивается с судьбой.</p>
+  <header>
+    <div class="logo">AnivoraHub</div>
+    <button class="burger-menu" id="burgerMenu">
+      <span></span>
+      <span></span>
+      <span></span>
+    </button>
+    <div class="header-buttons">
+      <button id="optionsBtn" class="menu-btn"><i class="fa-solid fa-gear"></i> Опции</button>
+      <div id="optionsPanel" class="options-panel">
+        <button class="options-btn" id="themeBtn"><i class="fa-solid fa-moon"></i> Тема</button>
+        <button class="options-btn" id="catalogBtn">Каталог</button>
+        <button class="options-btn" id="favoritesBtn">Избранное</button>
+        <button class="options-btn" id="historyBtn">История</button>
       </div>
-      <button class="like-btn" id="likeBtn"><i class="fa-solid fa-heart"></i></button>
     </div>
+  </header>
+
+  <!-- Мобильное меню -->
+  <div class="mobile-menu" id="mobileMenu">
+    <button class="mobile-menu-btn" id="mobileCatalogBtn"><i class="fa-solid fa-list"></i> Каталог</button>
+    <button class="mobile-menu-btn" id="mobileFavoritesBtn"><i class="fa-solid fa-heart"></i> Избранное</button>
+    <button class="mobile-menu-btn" id="mobileHistoryBtn"><i class="fa-solid fa-clock-rotate-left"></i> История</button>
+    <button class="mobile-menu-btn" id="mobileThemeBtn"><i class="fa-solid fa-moon"></i> Сменить тему</button>
   </div>
-</main>
 
-<!-- Каталог -->
-<div class="catalog mobile" id="catalog">
-  <button class="close-btn" onclick="toggleCatalog(false)">&times;</button>
-  <button class="catalog-btn active" onclick="switchAnime('https://vk.com/video_ext.php?oid=-221135691&id=456239325&hd=2&autoplay=1','Re:Zero — Сезон 1','История Субару Нацуки, который оказывается в новом мире и сталкивается с судьбой.', this)">Re:Zero — Сезон 1</button>
-  <button class="catalog-btn" onclick="switchAnime('https://vk.com/video_ext.php?oid=-220080671&id=456294073&hd=2&autoplay=1','Песнь ночных сов — Сезон 2','Продолжение приключений героев в мире загадочных ночных сов и тайн их ночного королевства.', this)">Песнь ночных сов — Сезон 2</button>
-</div>
+  <main>
+    <div class="player-section">
+      <div class="video-container">
+        <iframe 
+          src="https://vk.com/video_ext.php?oid=-221135691&id=456239325&hd=2&autoplay=1" 
+          allow="autoplay; encrypted-media; fullscreen; picture-in-picture; screen-wake-lock" 
+          allowfullscreen>
+        </iframe>
+      </div>
+      <div class="anime-info">
+        <div class="info-text">
+          <h3 class="anime-title">Re:Zero — Сезон 1</h3>
+          <p class="anime-description">История Субару Нацуки, который оказывается в новом мире и сталкивается с судьбой.</p>
+        </div>
+        <button class="like-btn" id="likeBtn"><i class="fa-solid fa-heart"></i></button>
+      </div>
+      <div id="resumeSection" class="resume-section hidden">
+        <button id="resumeBtn" class="resume-btn"><i class="fa-solid fa-play"></i> Продолжить просмотр</button>
+      </div>
+    </div>
+  </main>
 
-<!-- Избранное -->
-<div class="catalog mobile" id="favorites">
-  <button class="close-btn" onclick="toggleFavorites(false)">&times;</button>
-  <div id="favorites-list"></div>
-</div>
+  <!-- Каталог -->
+  <div class="catalog mobile" id="catalog">
+    <button class="close-btn" onclick="toggleCatalog(false)">&times;</button>
+    <button class="catalog-btn active" onclick="switchAnime('https://vk.com/video_ext.php?oid=-221135691&id=456239325&hd=2&autoplay=1','Re:Zero — Сезон 1','История Субару Нацуки, который оказывается в новом мире и сталкивается с судьбой.', this)">Re:Zero — Сезон 1</button>
+    <button class="catalog-btn" onclick="switchAnime('https://vk.com/video_ext.php?oid=-220080671&id=456294073&hd=2&autoplay=1','Песнь ночных сов — Сезон 2','Продолжение приключений героев в мире загадочных ночных сов и тайн их ночного королевства.', this)">Песнь ночных сов — Сезон 2</button>
+  </div>
 
-<footer>
-  <p>© 2025 AnivoraHub | Только для тестовых целей</p>
-</footer>
+  <!-- Избранное -->
+  <div class="catalog mobile" id="favorites">
+    <button class="close-btn" onclick="toggleFavorites(false)">&times;</button>
+    <div id="favorites-list"></div>
+  </div>
 
-<script src="script.js"></script>
+  <!-- История -->
+  <div class="catalog mobile" id="history">
+    <button class="close-btn" onclick="toggleHistory(false)">&times;</button>
+    <div id="history-list"></div>
+  </div>
+
+  <footer>
+    <p>© 2025 AnivoraHub | Только для тестовых целей</p>
+  </footer>
+
+  <script src="script.js"></script>
 </body>
 </html>
