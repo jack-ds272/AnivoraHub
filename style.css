@@ -1,0 +1,126 @@
+:root {
+  --primary: #6a55fa;
+  --accent: #ff4d8d;
+  --dark: #0e0e14;
+  --card-bg: #1e1f2a;
+  --light: #f8f9fa;
+  --day-bg: #f0f4f8;
+  --day-card: #ffffff;
+  --day-text: #1a1a1a;
+  --day-accent: #1976d2;
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
+
+body {
+  background: radial-gradient(circle at top, rgba(106,85,250,0.1), rgba(0,0,0,0.85)), var(--dark);
+  color: var(--light);
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  transition: background 0.3s, color 0.3s;
+}
+
+header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 15px 20px;
+  background: var(--card-bg);
+  box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+  position: sticky;
+  top: 0;
+  z-index: 100;
+}
+
+.logo { font-size: 28px; font-weight: 700; background: linear-gradient(135deg, var(--primary) 0%, var(--accent) 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+
+/* Кнопка Опции в углу */
+.header-buttons {
+  position: fixed;
+  top: 15px;
+  right: 15px;
+  z-index: 300;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+}
+
+.menu-btn { background: var(--primary); border: none; color: #fff; padding: 10px 15px; border-radius: 10px; cursor: pointer; font-size: 16px; transition: 0.3s; }
+.menu-btn:hover { background: var(--accent); }
+
+/* Панель опций */
+.options-panel {
+  display: flex;
+  flex-direction: row;
+  gap: 10px;
+  opacity: 0;
+  pointer-events: none;
+  transform: translateY(-10px);
+  transition: opacity 0.4s ease, transform 0.4s ease;
+  margin-top: 5px;
+  background: rgba(0,0,0,0.7);
+  padding: 5px 10px;
+  border-radius: 10px;
+}
+
+.options-panel.show {
+  opacity: 1;
+  pointer-events: auto;
+  transform: translateY(0);
+}
+
+.options-btn {
+  background: var(--primary);
+  border: none;
+  padding: 10px 15px;
+  color: #fff;
+  font-size: 14px;
+  cursor: pointer;
+  text-align: center;
+  border-radius: 5px;
+  transition: background 0.3s, transform 0.3s;
+}
+
+.options-btn:hover { background: var(--accent); transform: scale(1.05); }
+
+/* Видео */
+main { flex: 1; display: flex; justify-content: center; padding: 20px; }
+.player-section { flex: 1; max-width: 900px; width: 100%; background: var(--card-bg); border-radius: 15px; padding: 20px; box-shadow: 0 4px 15px rgba(0,0,0,0.2); display: flex; flex-direction: column; align-items: center; }
+.video-container { width: 100%; border-radius: 12px; overflow: hidden; box-shadow: 0 4px 20px rgba(0,0,0,0.4); background: #000; position: relative; padding-bottom: 56.25%; height: 0; }
+.video-container iframe { position: absolute; top: 0; left: 0; width: 100%; height: 100%; border: none; border-radius: 12px; opacity: 0; transform: scale(1.1); transition: opacity 0.6s ease, transform 0.6s ease; }
+.video-container iframe.show { opacity: 1; transform: scale(1); }
+
+.anime-info { margin-top: 15px; width: 100%; display: flex; justify-content: space-between; align-items: center; opacity: 0; transform: translateY(20px); transition: opacity 0.6s, transform 0.6s; }
+.anime-info.show { opacity: 1; transform: translateY(0); }
+.anime-info .info-text { max-width: 80%; }
+.anime-title { font-size: 22px; }
+.anime-description { font-size: 15px; color: #bdc3c7; }
+.like-btn { background: none; border: none; color: #ff4d8d; font-size: 22px; cursor: pointer; transition: transform 0.2s; }
+.like-btn.liked { color: #6a55fa; transform: scale(1.2); }
+
+/* Каталог и избранное */
+.catalog.mobile { position: fixed; top: 0; right: -100%; width: 80%; max-width: 350px; height: 100%; background: var(--card-bg); transition: right 0.4s ease, opacity 0.4s ease; z-index: 200; overflow-y: auto; padding-top: 50px; display: flex; flex-direction: column; gap: 10px; opacity: 0; }
+.catalog.mobile.active { right: 0; opacity: 1; }
+.catalog-btn { background: #2a2b38; border: none; padding: 12px 15px; margin: 5px 10px; border-radius: 8px; color: #fff; cursor: pointer; text-align: center; font-size: 16px; transition: background 0.3s, transform 0.2s; }
+.catalog-btn:hover, .catalog-btn.active { background: var(--accent); transform: scale(1.05); }
+
+#favorites-list button { width: 100%; margin: 5px 0; text-align: center; }
+
+.close-btn { background: var(--accent); color: #fff; font-size: 18px; font-weight: bold; border-radius: 50%; width: 30px; height: 30px; border: none; text-align: center; position: absolute; top: 10px; right: 10px; cursor: pointer; line-height: 28px; }
+
+/* Светлая тема */
+body.light { background: var(--day-bg); color: var(--day-text); }
+body.light .player-section, body.light footer, body.light .catalog.mobile, body.light #favorites, body.light .options-panel { background: var(--day-card); color: var(--day-text); }
+body.light .menu-btn, body.light .options-btn, body.light .catalog-btn { background: var(--day-accent); color: #fff; }
+body.light .menu-btn:hover, body.light .options-btn:hover, body.light .catalog-btn:hover { background: #63a4ff; }
+
+footer { text-align: center; padding: 15px; color: #bdc3c7; font-size: 13px; background: var(--card-bg); }
+
+/* Мобильная адаптация */
+@media (max-width: 900px){
+  main { flex-direction: column; padding: 15px; }
+  .video-container { padding-bottom: 70%; }
+  .anime-info { flex-direction: column; align-items: center; gap: 10px; }
+  .options-panel { flex-direction: column; width: max-content; }
+}
