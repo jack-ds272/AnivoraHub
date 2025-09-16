@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>AnivoraHub — Аниме онлайн</title>
+  <title>AnivoraHub — Аниме онлайн без рекламы</title>
   <link rel="stylesheet" href="style.css">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
@@ -11,59 +11,73 @@
   <!-- Прелоадер -->
   <div id="preloader">
     <div class="loader"></div>
+    <p>Загрузка AnivoraHub...</p>
   </div>
 
   <header>
-    <div class="logo">AnivoraHub</div>
+    <div class="header-content">
+      <div class="logo">AnivoraHub</div>
+      <div class="header-buttons">
+        <button id="optionsBtn" class="menu-btn"><i class="fa-solid fa-gear"></i> Опции</button>
+        <div id="optionsPanel" class="options-panel">
+          <button class="options-btn" id="themeBtn"><i class="fa-solid fa-moon"></i> Тема</button>
+          <button class="options-btn" id="catalogBtn">Каталог</button>
+          <button class="options-btn" id="favoritesBtn">Избранное</button>
+          <button class="options-btn" id="historyBtn">История</button>
+          <button class="options-btn" id="statsBtn">Профиль</button>
+        </div>
+      </div>
+    </div>
     <button class="burger-menu" id="burgerMenu">
       <span></span>
       <span></span>
       <span></span>
     </button>
-    <div class="header-buttons">
-      <button id="optionsBtn" class="menu-btn"><i class="fa-solid fa-gear"></i> Опции</button>
-      <div id="optionsPanel" class="options-panel">
-        <button class="options-btn" id="themeBtn"><i class="fa-solid fa-moon"></i> Тема</button>
-        <button class="options-btn" id="catalogBtn">Каталог</button>
-        <button class="options-btn" id="favoritesBtn">Избранное</button>
-        <button class="options-btn" id="historyBtn">История</button>
-      </div>
-    </div>
   </header>
 
   <!-- Мобильное меню -->
   <div class="mobile-menu" id="mobileMenu">
+    <div class="mobile-menu-header">
+      <h3>AnivoraHub</h3>
+      <p>Смотри аниме без рекламы и VPN</p>
+    </div>
     <button class="mobile-menu-btn" id="mobileCatalogBtn"><i class="fa-solid fa-list"></i> Каталог</button>
     <button class="mobile-menu-btn" id="mobileFavoritesBtn"><i class="fa-solid fa-heart"></i> Избранное</button>
     <button class="mobile-menu-btn" id="mobileHistoryBtn"><i class="fa-solid fa-clock-rotate-left"></i> История</button>
+    <button class="mobile-menu-btn" id="mobileStatsBtn"><i class="fa-solid fa-user"></i> Профиль</button>
     <button class="mobile-menu-btn" id="mobileThemeBtn"><i class="fa-solid fa-moon"></i> Сменить тему</button>
+    <div class="user-stats">
+      <div class="level-info">
+        <span>Уровень: <strong id="userLevel">1</strong></span>
+        <div class="level-bar">
+          <div class="level-progress" id="levelProgress"></div>
+        </div>
+      </div>
+    </div>
   </div>
 
   <main>
-    <div class="player-section">
-      <div class="video-container">
-        <iframe 
-          src="https://vk.com/video_ext.php?oid=-221135691&id=456239325&hd=2&autoplay=1" 
-          allow="autoplay; encrypted-media; fullscreen; picture-in-picture; screen-wake-lock" 
-          allowfullscreen>
-        </iframe>
-      </div>
-      <div class="anime-info">
-        <div class="info-text">
-          <h3 class="anime-title">Re:Zero — Сезон 1</h3>
-          <p class="anime-description">История Субару Нацуки, который оказывается в новом мире и сталкивается с судьбой.</p>
+    <section class="intro-section">
+      <div class="intro-content">
+        <h1>AnivoraHub</h1>
+        <p class="intro-description">Добро пожаловать на лучший сайт для просмотра аниме без рекламы и VPN. Наслаждайтесь любимыми сериалами в высоком качестве!</p>
+        <div class="demo-video">
+          <div class="video-container">
+            <iframe 
+              src="https://vk.com/video_ext.php?oid=-221135691&id=456239325&hd=2&autoplay=1" 
+              allow="autoplay; encrypted-media; fullscreen; picture-in-picture; screen-wake-lock" 
+              allowfullscreen>
+            </iframe>
+          </div>
         </div>
-        <button class="like-btn" id="likeBtn"><i class="fa-solid fa-heart"></i></button>
       </div>
-      <div id="resumeSection" class="resume-section hidden">
-        <button id="resumeBtn" class="resume-btn"><i class="fa-solid fa-play"></i> Продолжить просмотр</button>
-      </div>
-    </div>
+    </section>
   </main>
 
   <!-- Каталог -->
   <div class="catalog mobile" id="catalog">
     <button class="close-btn" onclick="toggleCatalog(false)">&times;</button>
+    <h2 class="catalog-title">Каталог аниме</h2>
     <button class="catalog-btn active" onclick="switchAnime('https://vk.com/video_ext.php?oid=-221135691&id=456239325&hd=2&autoplay=1','Re:Zero — Сезон 1','История Субару Нацуки, который оказывается в новом мире и сталкивается с судьбой.', this)">Re:Zero — Сезон 1</button>
     <button class="catalog-btn" onclick="switchAnime('https://vk.com/video_ext.php?oid=-220080671&id=456294073&hd=2&autoplay=1','Песнь ночных сов — Сезон 2','Продолжение приключений героев в мире загадочных ночных сов и тайн их ночного королевства.', this)">Песнь ночных сов — Сезон 2</button>
   </div>
@@ -71,17 +85,65 @@
   <!-- Избранное -->
   <div class="catalog mobile" id="favorites">
     <button class="close-btn" onclick="toggleFavorites(false)">&times;</button>
+    <h2 class="catalog-title">Избранное</h2>
     <div id="favorites-list"></div>
   </div>
 
   <!-- История -->
   <div class="catalog mobile" id="history">
     <button class="close-btn" onclick="toggleHistory(false)">&times;</button>
+    <h2 class="catalog-title">История просмотра</h2>
     <div id="history-list"></div>
   </div>
 
+  <!-- Профиль -->
+  <div class="catalog mobile stats-panel" id="statsPanel">
+    <button class="close-btn" onclick="toggleStats(false)">&times;</button>
+    <h2 class="catalog-title">Ваш профиль</h2>
+    <div class="stats-content">
+      <div class="profile-header">
+        <div class="avatar-container">
+          <img id="userAvatar" src="https://via.placeholder.com/100" alt="Аватар" class="user-avatar">
+          <button class="change-avatar-btn" id="changeAvatarBtn">
+            <i class="fa-solid fa-camera"></i>
+          </button>
+          <input type="file" id="avatarInput" accept="image/*" style="display: none;">
+        </div>
+        <div class="profile-info">
+          <input type="text" id="usernameInput" class="username-input" placeholder="Введите ваш никнейм" maxlength="20">
+          <p class="profile-level">Уровень: <span id="statLevel">1</span></p>
+        </div>
+      </div>
+      
+      <div class="stat-card">
+        <h3><i class="fa-solid fa-trophy"></i> Достижения</h3>
+        <div class="achievements-list" id="achievementsList">
+          <!-- Достижения будут добавлены через JS -->
+        </div>
+      </div>
+      
+      <div class="stat-card">
+        <h3><i class="fa-solid fa-chart-simple"></i> Статистика</h3>
+        <div class="stats-grid">
+          <div class="stat-item">
+            <i class="fa-solid fa-clock"></i>
+            <span>Всего просмотрено: <strong id="totalWatched">0</strong> мин.</span>
+          </div>
+          <div class="stat-item">
+            <i class="fa-solid fa-heart"></i>
+            <span>В избранном: <strong id="totalFavorites">0</strong></span>
+          </div>
+          <div class="stat-item">
+            <i class="fa-solid fa-play"></i>
+            <span>Просмотрено аниме: <strong id="totalAnime">0</strong></span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
   <footer>
-    <p>© 2025 AnivoraHub | Только для тестовых целей</p>
+    <p>© 2025 AnivoraHub | Только для тестовых целей | Смотрите аниме без рекламы и VPN</p>
   </footer>
 
   <script src="script.js"></script>
