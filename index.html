@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AnivoraHub — Аниме онлайн</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+<style>
+:root {
+  --primary: #6a55fa;
+  --accent: #ff4d8d;
+  --dark: #0e0e14;
+  --card-bg: #1e1f2a;
+  --light: #f8f9fa;
+}
+* { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
+body {
+  background: radial-gradient(circle at top, rgba(106,85,250,0.15), rgba(0,0,0,0.9)), var(--dark);
+  color: var(--light);
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  transition: background 0.3s;
+}
+body.catalog-open::before {
+  content: '';
+  position: fixed;
+  top: 0; left: 0;
+  width: 100%; height: 100%;
+  background: rgba(0,0,0,0.5);
+  z-index: 150;
+}
+header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 15px 20px;
+  background: var(--card-bg);
+  box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+  position: sticky;
+  top: 0;
+  z-index: 100;
+}
+.logo {
+  font-size: 28px;
+  font-weight: 700;
+  background: linear-gradient(135deg, var(--primary) 0%, var(--accent) 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+.menu-btn {
+  background: var(--primary);
+  border: none;
+  color: #fff;
+  padding: 10px 15px;
+  border-radius: 10px;
+  cursor: pointer;
+  font-size: 16px;
+  transition: 0.3s;
+}
+.menu-btn:hover { background: var(--accent); }
+
+main {
+  flex: 1;
+  display: flex;
+  justify-content: center;
+  padding: 20px;
+}
+
+.player-section {
+  flex: 1;
+  max-width: 900px;
+  width: 100%;
+  background: var(--card-bg);
+  border-radius: 15px;
+  padding: 20px;
+  box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.video-container {
+  width: 100%;
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.4);
+  background: #000;
+  position: relative;
+  padding-bottom: 56.25%;
+  height: 0;
+}
+.video-container iframe {
+  position: absolute;
+  top: 0; left: 0;
+  width: 100%; height: 100%;
+  border: none;
+  border-radius: 12px;
+}
+
+.anime-info {
+  margin-top: 15px;
+  text-align: center;
+}
+.anime-title { font-size: 22px; margin-bottom: 8px; }
+.anime-description { font-size: 15px; color: #bdc3c7; }
+
+/* Мобильная шторка каталога */
+.catalog.mobile {
+  position: fixed;
+  top: 0; right: -100%;
+  width: 80%;
+  max-width: 350px;
+  height: 100%;
+  background: var(--card-bg);
+  transition: right 0.4s ease-in-out;
+  z-index: 200;
+  overflow-y: auto;
+  padding-top: 50px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.catalog.mobile.active { right: 0; }
+.close-btn {
+  background: none;
+  border: none;
+  color: #fff;
+  font-size: 22px;
+  cursor: pointer;
+  position: absolute;
+  top: 15px; right: 15px;
+}
+.catalog-btn {
+  background: #2a2b38;
+  border: none;
+  padding: 12px 15px;
+  margin: 5px 10px;
+  border-radius: 8px;
+  color: #fff;
+  cursor: pointer;
+  text-align: left;
+  transition: 0.3s;
+  font-size: 16px;
+}
+.catalog-btn:hover, .catalog-btn.active {
+  background: var(--accent);
+  color: #fff;
+}
+
+footer {
+  text-align: center;
+  padding: 15px;
+  color: #bdc3c7;
+  font-size: 13px;
+  background: var(--card-bg);
+}
+
+/* Мобильная адаптация */
+@media (max-width: 900px) {
+  main { flex-direction: column; padding: 15px; }
+  .video-container { padding-bottom: 70%; }
+  .menu-btn { font-size: 18px; padding: 12px 18px; }
+}
+</style>
+</head>
+<body>
+<header>
+  <div class="logo">AnivoraHub</div>
+  <button class="menu-btn" onclick="toggleCatalog()"><i class="fa-solid fa-bars"></i> Каталог</button>
+</header>
+
+<main>
+  <div class="player-section">
+    <div class="video-container">
+      <iframe 
+        src="https://vk.com/video_ext.php?oid=-221135691&id=456239325&hd=2&autoplay=1" 
+        allow="autoplay; encrypted-media; fullscreen; picture-in-picture; screen-wake-lock" 
+        allowfullscreen>
+      </iframe>
+    </div>
+    <div class="anime-info">
+      <h3 class="anime-title">Re:Zero — Сезон 1</h3>
+      <p class="anime-description">История Субару Нацуки, который оказывается в новом мире и сталкивается с судьбой.</p>
+    </div>
+  </div>
+</main>
+
+<!-- Каталог (мобильная версия) -->
+<div class="catalog mobile" id="catalog">
+  <button class="close-btn" onclick="toggleCatalog()">&times;</button>
+  <button class="catalog-btn active" onclick="switchAnime('https://vk.com/video_ext.php?oid=-221135691&id=456239325&hd=2&autoplay=1','Re:Zero — Сезон 1','История Субару Нацуки, который оказывается в новом мире и сталкивается с судьбой.', this)">Re:Zero — Сезон 1</button>
+  <button class="catalog-btn" onclick="switchAnime('https://vk.com/video_ext.php?oid=-220080671&id=456294073&hd=2&autoplay=1','Песнь ночных сов — Сезон 2','Продолжение приключений героев в мире загадочных ночных сов и тайн их ночного королевства.', this)">Песнь ночных сов — Сезон 2</button>
+</div>
+
+<footer>
+  <p>© 2025 AnivoraHub | Только для тестовых целей</p>
+</footer>
+
+<script>
+function toggleCatalog() {
+  document.getElementById('catalog').classList.toggle('active');
+  document.body.classList.toggle('catalog-open');
+}
+
+function switchAnime(url, title, desc, btn) {
+  const iframe = document.querySelector('.video-container iframe');
+  iframe.src = url;
+  document.querySelector('.anime-title').innerText = title;
+  document.querySelector('.anime-description').innerText = desc;
+
+  // Подсветка активной кнопки
+  document.querySelectorAll('.catalog-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+
+  // Закрываем каталог
+  document.getElementById('catalog').classList.remove('active');
+  document.body.classList.remove('catalog-open');
+}
+</script>
+</body>
+</html>
