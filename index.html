@@ -14,232 +14,240 @@
     <p>Загрузка AnivoraHub...</p>
   </div>
 
-  <header>
-    <div class="header-content">
-      <div class="logo">AnivoraHub</div>
-      <div class="header-buttons">
-        <button id="optionsBtn" class="menu-btn"><i class="fa-solid fa-gear"></i> Опции</button>
-        <div id="optionsPanel" class="options-panel">
-          <button class="options-btn" id="themeBtn"><i class="fa-solid fa-moon"></i> Тема</button>
-          <button class="options-btn" id="catalogBtn">Каталог</button>
-          <button class="options-btn" id="favoritesBtn">Избранное</button>
-          <button class="options-btn" id="historyBtn">История</button>
-          <button class="options-btn" id="statsBtn">Профиль</button>
+  <!-- Главный экран -->
+  <div id="mainScreen">
+    <header>
+      <div class="header-content">
+        <div class="logo">AnivoraHub</div>
+        <div class="header-buttons">
+          <button id="optionsBtn" class="menu-btn"><i class="fa-solid fa-gear"></i> Опции</button>
+          <div id="optionsPanel" class="options-panel">
+            <button class="options-btn" id="themeBtn"><i class="fa-solid fa-moon"></i> Тема</button>
+            <button class="options-btn" id="catalogBtn">Каталог</button>
+            <button class="options-btn" id="favoritesBtn">Избранное</button>
+            <button class="options-btn" id="historyBtn">История</button>
+            <button class="options-btn" id="statsBtn">Профиль</button>
+          </div>
+        </div>
+      </div>
+      <button class="burger-menu" id="burgerMenu">
+        <span></span>
+        <span></span>
+        <span></span>
+      </button>
+    </header>
+
+    <!-- Мобильное меню -->
+    <div class="mobile-menu" id="mobileMenu">
+      <div class="mobile-menu-header">
+        <h3>AnivoraHub</h3>
+        <p>Смотри аниме без рекламы и VPN</p>
+      </div>
+      <button class="mobile-menu-btn" id="mobileCatalogBtn"><i class="fa-solid fa-list"></i> Каталог</button>
+      <button class="mobile-menu-btn" id="mobileFavoritesBtn"><i class="fa-solid fa-heart"></i> Избранное</button>
+      <button class="mobile-menu-btn" id="mobileHistoryBtn"><i class="fa-solid fa-clock-rotate-left"></i> История</button>
+      <button class="mobile-menu-btn" id="mobileStatsBtn"><i class="fa-solid fa-user"></i> Профиль</button>
+      <button class="mobile-menu-btn" id="mobileThemeBtn"><i class="fa-solid fa-moon"></i> Сменить тему</button>
+      <div class="user-stats">
+        <div class="level-info">
+          <span>Уровень: <strong id="userLevel">1</strong></span>
+          <div class="level-bar">
+            <div class="level-progress" id="levelProgress"></div>
+          </div>
         </div>
       </div>
     </div>
-    <button class="burger-menu" id="burgerMenu">
-      <span></span>
-      <span></span>
-      <span></span>
-    </button>
-  </header>
 
-  <!-- Мобильное меню -->
-  <div class="mobile-menu" id="mobileMenu">
-    <div class="mobile-menu-header">
-      <h3>AnivoraHub</h3>
-      <p>Смотри аниме без рекламы и VPN</p>
-    </div>
-    <button class="mobile-menu-btn" id="mobileCatalogBtn"><i class="fa-solid fa-list"></i> Каталог</button>
-    <button class="mobile-menu-btn" id="mobileFavoritesBtn"><i class="fa-solid fa-heart"></i> Избранное</button>
-    <button class="mobile-menu-btn" id="mobileHistoryBtn"><i class="fa-solid fa-clock-rotate-left"></i> История</button>
-    <button class="mobile-menu-btn" id="mobileStatsBtn"><i class="fa-solid fa-user"></i> Профиль</button>
-    <button class="mobile-menu-btn" id="mobileThemeBtn"><i class="fa-solid fa-moon"></i> Сменить тему</button>
-    <div class="user-stats">
-      <div class="level-info">
-        <span>Уровень: <strong id="userLevel">1</strong></span>
-        <div class="level-bar">
-          <div class="level-progress" id="levelProgress"></div>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <main>
-    <section class="intro-section">
-      <div class="intro-content">
-        <h1>AnivoraHub</h1>
-        <p class="intro-description">Добро пожаловать на лучший сайт для просмотра аниме без рекламы и VPN</p>
-        
-        <div class="features-grid">
-          <div class="feature-card">
-            <i class="fa-solid fa-play-circle"></i>
-            <h3>Просмотр без рекламы</h3>
-            <p>Наслаждайтесь аниме без надоедливой рекламы и прерываний</p>
+    <main>
+      <section class="intro-section">
+        <div class="intro-content">
+          <h1>AnivoraHub</h1>
+          <p class="intro-description">Добро пожаловать на лучший сайт для просмотра аниме без рекламы и VPN</p>
+          
+          <div class="features-grid">
+            <div class="feature-card">
+              <i class="fa-solid fa-play-circle"></i>
+              <h3>Просмотр без рекламы</h3>
+              <p>Наслаждайтесь аниме без надоедливой рекламы и прерываний</p>
+            </div>
+            
+            <div class="feature-card">
+              <i class="fa-solid fa-bolt"></i>
+              <h3>Высокая скорость</h3>
+              <p>Мгновенная загрузка и плавное воспроизведение в HD качестве</p>
+            </div>
+            
+            <div class="feature-card">
+              <i class="fa-solid fa-mobile-alt"></i>
+              <h3>Для всех устройств</h3>
+              <p>Смотрите на телефоне, планшете или компьютере</p>
+            </div>
+            
+            <div class="feature-card">
+              <i class="fa-solid fa-heart"></i>
+              <h3>Избранное</h3>
+              <p>Сохраняйте любимые аниме для быстрого доступа</p>
+            </div>
+            
+            <div class="feature-card">
+              <i class="fa-solid fa-trophy"></i>
+              <h3>Достижения</h3>
+              <p>Зарабатывайте достижения и повышайте уровень</p>
+            </div>
+            
+            <div class="feature-card">
+              <i class="fa-solid fa-download"></i>
+              <h3>Оффлайн-доступ</h3>
+              <p>Продолжайте смотреть даже без интернета</p>
+            </div>
           </div>
           
-          <div class="feature-card">
-            <i class="fa-solid fa-bolt"></i>
-            <h3>Высокая скорость</h3>
-            <p>Мгновенная загрузка и плавное воспроизведение в HD качестве</p>
-          </div>
-          
-          <div class="feature-card">
-            <i class="fa-solid fa-mobile-alt"></i>
-            <h3>Для всех устройств</h3>
-            <p>Смотрите на телефоне, планшете или компьютере</p>
-          </div>
-          
-          <div class="feature-card">
-            <i class="fa-solid fa-heart"></i>
-            <h3>Избранное</h3>
-            <p>Сохраняйте любимые аниме для быстрого доступа</p>
-          </div>
-          
-          <div class="feature-card">
-            <i class="fa-solid fa-trophy"></i>
-            <h3>Достижения</h3>
-            <p>Зарабатывайте достижения и повышайте уровень</p>
-          </div>
-          
-          <div class="feature-card">
-            <i class="fa-solid fa-download"></i>
-            <h3>Оффлайн-доступ</h3>
-            <p>Продолжайте смотреть даже без интернета</p>
+          <div class="cta-section">
+            <h2>Начните просмотр прямо сейчас!</h2>
+            <button class="cta-button" onclick="toggleCatalog(true)">
+              <i class="fa-solid fa-play"></i> Открыть каталог
+            </button>
           </div>
         </div>
+      </section>
+    </main>
+
+    <!-- Каталог -->
+    <div class="catalog mobile" id="catalog">
+      <button class="close-btn" onclick="toggleCatalog(false)">&times;</button>
+      <h2 class="catalog-title">Каталог аниме</h2>
+      <div class="anime-list">
+        <div class="anime-item" data-src="https://vk.com/video_ext.php?oid=-221135691&id=456239325&hd=2&autoplay=1" 
+             data-title="Re:Zero — Сезон 1" 
+             data-desc="История Субару Нацуки, который оказывается в новом мире и сталкивается с судьбой.">
+          <div class="anime-preview">
+            <div class="anime-image" style="background-image: url('https://via.placeholder.com/200x300/6a55fa/ffffff?text=Re:Zero')"></div>
+            <button class="anime-like-btn"><i class="fa-solid fa-heart"></i></button>
+          </div>
+          <h3>Re:Zero — Сезон 1</h3>
+          <p>История Субару Нацуки в новом мире</p>
+          <button class="watch-btn" onclick="switchAnime(this.parentElement)">
+            <i class="fa-solid fa-play"></i> Смотреть
+          </button>
+        </div>
         
-        <div class="cta-section">
-          <h2>Начните просмотр прямо сейчас!</h2>
-          <button class="cta-button" onclick="toggleCatalog(true)">
-            <i class="fa-solid fa-play"></i> Открыть каталог
+        <div class="anime-item" data-src="https://vk.com/video_ext.php?oid=-220080671&id=456294073&hd=2&autoplay=1" 
+             data-title="Песнь ночных сов — Сезон 2" 
+             data-desc="Продолжение приключений героев в мире загадочных ночных сов.">
+          <div class="anime-preview">
+            <div class="anime-image" style="background-image: url('https://via.placeholder.com/200x300/ff4d8d/ffffff?text=Песнь+сов')"></div>
+            <button class="anime-like-btn"><i class="fa-solid fa-heart"></i></button>
+          </div>
+          <h3>Песнь ночных сов — Сезон 2</h3>
+          <p>Продолжение приключений в мире ночных сов</p>
+          <button class="watch-btn" onclick="switchAnime(this.parentElement)">
+            <i class="fa-solid fa-play"></i> Смотреть
           </button>
         </div>
       </div>
-    </section>
-  </main>
-
-  <!-- Каталог -->
-  <div class="catalog mobile" id="catalog">
-    <button class="close-btn" onclick="toggleCatalog(false)">&times;</button>
-    <h2 class="catalog-title">Каталог аниме</h2>
-    <div class="anime-list">
-      <div class="anime-item" data-src="https://vk.com/video_ext.php?oid=-221135691&id=456239325&hd=2&autoplay=1" 
-           data-title="Re:Zero — Сезон 1" 
-           data-desc="История Субару Нацуки, который оказывается в новом мире и сталкивается с судьбой.">
-        <div class="anime-preview">
-          <div class="anime-image" style="background-image: url('https://via.placeholder.com/200x300/6a55fa/ffffff?text=Re:Zero')"></div>
-          <button class="anime-like-btn"><i class="fa-solid fa-heart"></i></button>
-        </div>
-        <h3>Re:Zero — Сезон 1</h3>
-        <p>История Субару Нацуки в новом мире</p>
-        <button class="watch-btn" onclick="switchAnime(this.parentElement)">
-          <i class="fa-solid fa-play"></i> Смотреть
-        </button>
-      </div>
-      
-      <div class="anime-item" data-src="https://vk.com/video_ext.php?oid=-220080671&id=456294073&hd=2&autoplay=1" 
-           data-title="Песнь ночных сов — Сезон 2" 
-           data-desc="Продолжение приключений героев в мире загадочных ночных сов.">
-        <div class="anime-preview">
-          <div class="anime-image" style="background-image: url('https://via.placeholder.com/200x300/ff4d8d/ffffff?text=Песнь+сов')"></div>
-          <button class="anime-like-btn"><i class="fa-solid fa-heart"></i></button>
-        </div>
-        <h3>Песнь ночных сов — Сезон 2</h3>
-        <p>Продолжение приключений в мире ночных сов</p>
-        <button class="watch-btn" onclick="switchAnime(this.parentElement)">
-          <i class="fa-solid fa-play"></i> Смотреть
-        </button>
-      </div>
     </div>
-  </div>
 
-  <!-- Плеер -->
-  <div class="player-overlay" id="playerOverlay">
-    <div class="player-container">
-      <button class="close-player-btn" onclick="closePlayer()">&times;</button>
-      <div class="video-container">
-        <iframe id="playerFrame" allow="autoplay; encrypted-media; fullscreen" allowfullscreen></iframe>
-      </div>
-      <div class="player-info">
-        <div class="anime-info">
-          <div class="info-text">
-            <h3 class="anime-title" id="playerTitle"></h3>
-            <p class="anime-description" id="playerDescription"></p>
-          </div>
-          <button class="like-btn" id="playerLikeBtn"><i class="fa-solid fa-heart"></i></button>
-        </div>
-      </div>
+    <!-- Избранное -->
+    <div class="catalog mobile" id="favorites">
+      <button class="close-btn" onclick="toggleFavorites(false)">&times;</button>
+      <h2 class="catalog-title">Избранное</h2>
+      <div id="favorites-list" class="favorites-list"></div>
     </div>
-  </div>
 
-  <!-- Избранное -->
-  <div class="catalog mobile" id="favorites">
-    <button class="close-btn" onclick="toggleFavorites(false)">&times;</button>
-    <h2 class="catalog-title">Избранное</h2>
-    <div id="favorites-list" class="favorites-list"></div>
-  </div>
+    <!-- История -->
+    <div class="catalog mobile" id="history">
+      <button class="close-btn" onclick="toggleHistory(false)">&times;</button>
+      <h2 class="catalog-title">История просмотра</h2>
+      <div id="history-list" class="history-list"></div>
+    </div>
 
-  <!-- История -->
-  <div class="catalog mobile" id="history">
-    <button class="close-btn" onclick="toggleHistory(false)">&times;</button>
-    <h2 class="catalog-title">История просмотра</h2>
-    <div id="history-list" class="history-list"></div>
-  </div>
-
-  <!-- Профиль -->
-  <div class="catalog mobile stats-panel" id="statsPanel">
-    <button class="close-btn" onclick="toggleStats(false)">&times;</button>
-    <h2 class="catalog-title">Ваш профиль</h2>
-    <div class="stats-content">
-      <div class="profile-header">
-        <div class="avatar-container">
-          <img id="userAvatar" src="https://via.placeholder.com/100" alt="Аватар" class="user-avatar">
-          <button class="change-avatar-btn" id="changeAvatarBtn">
-            <i class="fa-solid fa-camera"></i>
-          </button>
-          <input type="file" id="avatarInput" accept="image/*" style="display: none;">
-        </div>
-        <div class="profile-info">
-          <input type="text" id="usernameInput" class="username-input" placeholder="Введите ваш никнейм" maxlength="20">
-          <p class="profile-level">Уровень: <span id="statLevel">1</span></p>
-        </div>
-      </div>
-      
-      <div class="stat-card">
-        <h3><i class="fa-solid fa-trophy"></i> Прогресс уровня</h3>
-        <div class="level-display">
-          <div class="level-bar large">
-            <div class="level-progress" id="statLevelProgress"></div>
+    <!-- Профиль -->
+    <div class="catalog mobile stats-panel" id="statsPanel">
+      <button class="close-btn" onclick="toggleStats(false)">&times;</button>
+      <h2 class="catalog-title">Ваш профиль</h2>
+      <div class="stats-content">
+        <div class="profile-header">
+          <div class="avatar-container">
+            <img id="userAvatar" src="https://via.placeholder.com/100" alt="Аватар" class="user-avatar">
+            <button class="change-avatar-btn" id="changeAvatarBtn">
+              <i class="fa-solid fa-camera"></i>
+            </button>
+            <input type="file" id="avatarInput" accept="image/*" style="display: none;">
           </div>
-          <div class="level-text">
-            <span>Уровень <span id="currentLevel">1</span></span>
-            <span><span id="currentXP">0</span>/1000 XP</span>
+          <div class="profile-info">
+            <input type="text" id="usernameInput" class="username-input" placeholder="Введите ваш никнейм" maxlength="20">
+            <p class="profile-level">Уровень: <span id="statLevel">1</span></p>
           </div>
         </div>
-      </div>
-      
-      <div class="stat-card">
-        <h3><i class="fa-solid fa-medal"></i> Достижения</h3>
-        <div class="achievements-list" id="achievementsList">
-          <!-- Достижения будут добавлены через JS -->
+        
+        <div class="stat-card">
+          <h3><i class="fa-solid fa-trophy"></i> Прогресс уровня</h3>
+          <div class="level-display">
+            <div class="level-bar large">
+              <div class="level-progress" id="statLevelProgress"></div>
+            </div>
+            <div class="level-text">
+              <span>Уровень <span id="currentLevel">1</span></span>
+              <span><span id="currentXP">0</span>/1000 XP</span>
+            </div>
+          </div>
         </div>
-      </div>
-      
-      <div class="stat-card">
-        <h3><i class="fa-solid fa-chart-simple"></i> Статистика</h3>
-        <div class="stats-grid">
-          <div class="stat-item">
-            <i class="fa-solid fa-clock"></i>
-            <span>Всего просмотрено: <strong id="totalWatched">0</strong> мин.</span>
+        
+        <div class="stat-card">
+          <h3><i class="fa-solid fa-medal"></i> Достижения</h3>
+          <div class="achievements-list" id="achievementsList">
+            <!-- Достижения будут добавлены через JS -->
           </div>
-          <div class="stat-item">
-            <i class="fa-solid fa-heart"></i>
-            <span>В избранном: <strong id="totalFavorites">0</strong></span>
-          </div>
-          <div class="stat-item">
-            <i class="fa-solid fa-play"></i>
-            <span>Просмотрено аниме: <strong id="totalAnime">0</strong></span>
+        </div>
+        
+        <div class="stat-card">
+          <h3><i class="fa-solid fa-chart-simple"></i> Статистика</h3>
+          <div class="stats-grid">
+            <div class="stat-item">
+              <i class="fa-solid fa-clock"></i>
+              <span>Всего просмотрено: <strong id="totalWatched">0</strong> мин.</span>
+            </div>
+            <div class="stat-item">
+              <i class="fa-solid fa-heart"></i>
+              <span>В избранном: <strong id="totalFavorites">0</strong></span>
+            </div>
+            <div class="stat-item">
+              <i class="fa-solid fa-play"></i>
+              <span>Просмотрено аниме: <strong id="totalAnime">0</strong></span>
+            </div>
           </div>
         </div>
       </div>
     </div>
+
+    <footer>
+      <p>© 2025 AnivoraHub | Только для тестовых целей | Смотрите аниме без рекламы и VPN</p>
+    </footer>
   </div>
 
-  <footer>
-    <p>© 2025 AnivoraHub | Только для тестовых целей | Смотрите аниме без рекламы и VPN</p>
-  </footer>
+  <!-- Экран плеера -->
+  <div id="playerScreen" class="hidden">
+    <div class="player-header">
+      <button class="back-btn" onclick="closePlayer()">
+        <i class="fa-solid fa-arrow-left"></i>
+      </button>
+      <h2 class="player-title" id="fullscreenTitle">Re:Zero — Сезон 1</h2>
+      <button class="player-like-btn" id="fullscreenLikeBtn">
+        <i class="fa-solid fa-heart"></i>
+      </button>
+    </div>
+    
+    <div class="video-container-fullscreen">
+      <iframe id="playerFrame" allow="autoplay; encrypted-media; fullscreen" allowfullscreen></iframe>
+    </div>
+    
+    <div class="player-info-fullscreen">
+      <div class="anime-info-fullscreen">
+        <h3 id="fullscreenAnimeTitle">Re:Zero — Сезон 1</h3>
+        <p id="fullscreenAnimeDesc">История Субару Нацуки, который оказывается в новом мире и сталкивается с судьбой.</p>
+      </div>
+    </div>
+  </div>
 
   <script src="script.js"></script>
 </body>

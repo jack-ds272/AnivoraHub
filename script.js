@@ -39,12 +39,13 @@ const changeAvatarBtn = document.getElementById('changeAvatarBtn');
 const avatarInput = document.getElementById('avatarInput');
 const userAvatar = document.getElementById('userAvatar');
 const usernameInput = document.getElementById('usernameInput');
-const playerOverlay = document.getElementById('playerOverlay');
 const playerFrame = document.getElementById('playerFrame');
-const playerTitle = document.getElementById('playerTitle');
-const playerDescription = document.getElementById('playerDescription');
-const playerLikeBtn = document.getElementById('playerLikeBtn');
-const closePlayerBtn = document.querySelector('.close-player-btn');
+const fullscreenLikeBtn = document.getElementById('fullscreenLikeBtn');
+const fullscreenTitle = document.getElementById('fullscreenTitle');
+const fullscreenAnimeTitle = document.getElementById('fullscreenAnimeTitle');
+const fullscreenAnimeDesc = document.getElementById('fullscreenAnimeDesc');
+const mainScreen = document.getElementById('mainScreen');
+const playerScreen = document.getElementById('playerScreen');
 const ctaButton = document.querySelector('.cta-button');
 
 const catalog = document.getElementById('catalog');
@@ -69,6 +70,8 @@ const totalAnimeEl = document.getElementById('totalAnime');
 let currentAnime = null;
 let isButtonCooldown = false;
 let watchTimer = null;
+let touchStartX = 0;
+let currentPanel = null;
 
 // Инициализация
 document.addEventListener('DOMContentLoaded', () => {
@@ -81,6 +84,7 @@ document.addEventListener('DOMContentLoaded', () => {
     updateHistoryList();
     initAnimeItems();
     initEventListeners();
+    applyTheme(localStorage.getItem('theme') || 'dark');
   }, 1000);
 });
 
@@ -138,15 +142,65 @@ function initEventListeners() {
   usernameInput.addEventListener('keypress', handleUsernameEnter);
   
   // Плеер
-  playerLikeBtn.addEventListener('click', handlePlayerLike);
-  closePlayerBtn.addEventListener('click', closePlayer);
+  fullscreenLikeBtn.addEventListener('click', handlePlayerLike);
   
-  // Свайпы
-  document.addEventListener('touchstart', handleTouchStart, { passive: true });
-  document.addEventListener('touchend', handleTouchEnd, { passive: true });
+  // Свайпы для панелей
+  initSwipeListeners();
   
   // Предотвращение масштабирования
   document.addEventListener('gesturestart', (e) => e.preventDefault());
+  document.addEventListener('touchstart', handleTouchStart, { passive: false });
+  document.addEventListener('touchend', handleTouchEnd, { passive: false });
+}
+
+// Инициализация свайпов для панелей
+function initSwipeListeners() {
+  [catalog, favorites, historyDiv, statsPanel].forEach(panel => {
+    if (panel) {
+      panel.addEventListener('touchstart', handlePanelTouchStart, { passive: true });
+      panel.addEventListener('touchmove', handlePanelTouchMove, { passive: false });
+      panel.addEventListener('touchend', handlePanelTouchEnd, { passive: true });
+    }
+  });
+}
+
+// Обработчики свайпов для панелей
+function handlePanelTouchStart(e) {
+  touchStartX = e.touches[0].clientX;
+  currentPanel = e.currentTarget;
+}
+
+function handlePanelTouchMove(e) {
+  if (!currentPanel) return;
+  
+  const touchX = e.touches[0].clientX;
+  const diff = touchX - touchStartX;
+  
+  // Блокируем вертикальный скролл при горизонтальном свайпе
+  if (Math.abs(diff) > 10) {
+    e.preventDefault();
+  }
+}
+
+function handlePanelTouchEnd(e) {
+  if (!currentPanel) return;
+  
+  const touchEndX = e.changedTouches[0].clientX;
+  const diff = touchEndX - touchStartX;
+  
+  // Свайп влево для закрытия
+  if (diff < -50) {
+    closeCurrentPanel();
+  }
+  
+  currentPanel = null;
+}
+
+function closeCurrentPanel() {
+  if (currentPanel === catalog) toggleCatalog(false);
+  else if (currentPanel === favorites) toggleFavorites(false);
+  else if (currentPanel === historyDiv) toggleHistory(false);
+  else if (currentPanel === statsPanel) toggleStats(false);
 }
 
 // Защита от быстрых нажатий
@@ -295,6 +349,7 @@ function hideOtherPanels(currentPanel) {
       panel.classList.remove('active');
     }
   });
+  optionsPanel.classList.remove('show');
 }
 
 // Инициализация аниме-items
@@ -309,15 +364,6 @@ function initAnimeItems() {
       }
     });
   });
-  
-  document.querySelectorAll('.watch-btn').forEach(btn => {
-    btn.addEventListener('click', function() {
-      const animeItem = this.closest('.anime-item');
-      if (animeItem) {
-        switchAnime(animeItem);
-      }
-    });
-  });
 }
 
 // Лайки
@@ -329,11 +375,10 @@ function toggleLike(title, btn = null) {
     
     if (btn) {
       btn.classList.toggle('liked', liked[title]);
-      btn.innerHTML = `<i class="fa-solid fa-heart${liked[title] ? '' : ''}"></i>`;
     }
     
-    if (playerLikeBtn && currentAnime === title) {
-      playerLikeBtn.classList.toggle('liked', liked[title]);
+    if (fullscreenLikeBtn && currentAnime === title) {
+      fullscreenLikeBtn.classList.toggle('liked', liked[title]);
     }
     
     updateFavoritesList();
@@ -559,7 +604,7 @@ function updateAchievementsDisplay() {
   }
 }
 
-// Плеер
+// Плеер - полноэкранный режим
 function switchAnime(animeElement) {
   try {
     const src = animeElement.dataset.src;
@@ -569,18 +614,26 @@ function switchAnime(animeElement) {
     if (!src || !title) return;
     
     currentAnime = title;
-    if (playerFrame) playerFrame.src = src;
-    if (playerTitle) playerTitle.textContent = title;
-    if (playerDescription) playerDescription.textContent = desc;
+    
+    // Обновляем информацию в плеере
+    if (fullscreenTitle) fullscreenTitle.textContent = title;
+    if (fullscreenAnimeTitle) fullscreenAnimeTitle.textContent = title;
+    if (fullscreenAnimeDesc) fullscreenAnimeDesc.textContent = desc;
     
     // Обновляем лайк
     const liked = JSON.parse(localStorage.getItem('likedAnime') || '{}');
-    if (playerLikeBtn) {
-      playerLikeBtn.classList.toggle('liked', liked[title]);
+    if (fullscreenLikeBtn) {
+      fullscreenLikeBtn.classList.toggle('liked', liked[title]);
     }
     
-    // Показываем плеер
-    if (playerOverlay) playerOverlay.classList.add('active');
+    // Переключаемся на экран плеера
+    if (mainScreen) mainScreen.classList.add('hidden');
+    if (playerScreen) playerScreen.classList.remove('hidden');
+    
+    // Загружаем видео
+    if (playerFrame) {
+      playerFrame.src = src;
+    }
     
     // Добавляем в историю и начисляем XP
     addToHistory(title);
@@ -605,7 +658,8 @@ function openAnime(title) {
 }
 
 function closePlayer() {
-  if (playerOverlay) playerOverlay.classList.remove('active');
+  if (mainScreen) mainScreen.classList.remove('hidden');
+  if (playerScreen) playerScreen.classList.add('hidden');
   if (playerFrame) playerFrame.src = '';
   stopWatchTimer();
 }
@@ -636,14 +690,13 @@ function updateStatsPanel() {
   updateAchievementsDisplay();
 }
 
-// Touch события
-let touchStartX = 0;
+// Touch события для основного контента
 function handleTouchStart(e) {
-  touchStartX = e.changedTouches[0].screenX;
+  touchStartX = e.touches[0].clientX;
 }
 
 function handleTouchEnd(e) {
-  const touchEndX = e.changedTouches[0].screenX;
+  const touchEndX = e.changedTouches[0].clientX;
   handleSwipe(touchEndX);
 }
 
@@ -659,22 +712,10 @@ function handleSwipe(touchEndX) {
     }
   }
   
-  // Свайп справа налево для закрытия
-  if (touchStartX > touchEndX + swipeThreshold) {
-    // Закрытие мобильного меню
-    if (mobileMenu && mobileMenu.classList.contains('active')) {
-      toggleMobileMenu();
-    }
-    // Закрытие других панелей
-    hideAllPanels();
+  // Свайп справа налево для закрытия меню
+  if (touchStartX > touchEndX + swipeThreshold && mobileMenu.classList.contains('active')) {
+    toggleMobileMenu();
   }
-}
-
-function hideAllPanels() {
-  [catalog, favorites, historyDiv, statsPanel].forEach(panel => {
-    if (panel) panel.classList.remove('active');
-  });
-  if (optionsPanel) optionsPanel.classList.remove('show');
 }
 
 // Глобальные функции для onclick
@@ -684,6 +725,3 @@ window.toggleHistory = toggleHistory;
 window.switchAnime = switchAnime;
 window.openAnime = openAnime;
 window.closePlayer = closePlayer;
-
-// Применяем тему при загрузке
-applyTheme(localStorage.getItem('theme') || 'dark');
