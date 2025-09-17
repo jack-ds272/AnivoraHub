@@ -60,15 +60,51 @@
     <section class="intro-section">
       <div class="intro-content">
         <h1>AnivoraHub</h1>
-        <p class="intro-description">Добро пожаловать на лучший сайт для просмотра аниме без рекламы и VPN. Наслаждайтесь любимыми сериалами в высоком качестве!</p>
-        <div class="demo-video">
-          <div class="video-container">
-            <iframe 
-              src="https://vk.com/video_ext.php?oid=-221135691&id=456239325&hd=2&autoplay=1" 
-              allow="autoplay; encrypted-media; fullscreen; picture-in-picture; screen-wake-lock" 
-              allowfullscreen>
-            </iframe>
+        <p class="intro-description">Добро пожаловать на лучший сайт для просмотра аниме без рекламы и VPN</p>
+        
+        <div class="features-grid">
+          <div class="feature-card">
+            <i class="fa-solid fa-play-circle"></i>
+            <h3>Просмотр без рекламы</h3>
+            <p>Наслаждайтесь аниме без надоедливой рекламы и прерываний</p>
           </div>
+          
+          <div class="feature-card">
+            <i class="fa-solid fa-bolt"></i>
+            <h3>Высокая скорость</h3>
+            <p>Мгновенная загрузка и плавное воспроизведение в HD качестве</p>
+          </div>
+          
+          <div class="feature-card">
+            <i class="fa-solid fa-mobile-alt"></i>
+            <h3>Для всех устройств</h3>
+            <p>Смотрите на телефоне, планшете или компьютере</p>
+          </div>
+          
+          <div class="feature-card">
+            <i class="fa-solid fa-heart"></i>
+            <h3>Избранное</h3>
+            <p>Сохраняйте любимые аниме для быстрого доступа</p>
+          </div>
+          
+          <div class="feature-card">
+            <i class="fa-solid fa-trophy"></i>
+            <h3>Достижения</h3>
+            <p>Зарабатывайте достижения и повышайте уровень</p>
+          </div>
+          
+          <div class="feature-card">
+            <i class="fa-solid fa-download"></i>
+            <h3>Оффлайн-доступ</h3>
+            <p>Продолжайте смотреть даже без интернета</p>
+          </div>
+        </div>
+        
+        <div class="cta-section">
+          <h2>Начните просмотр прямо сейчас!</h2>
+          <button class="cta-button" onclick="toggleCatalog(true)">
+            <i class="fa-solid fa-play"></i> Открыть каталог
+          </button>
         </div>
       </div>
     </section>
@@ -78,22 +114,68 @@
   <div class="catalog mobile" id="catalog">
     <button class="close-btn" onclick="toggleCatalog(false)">&times;</button>
     <h2 class="catalog-title">Каталог аниме</h2>
-    <button class="catalog-btn active" onclick="switchAnime('https://vk.com/video_ext.php?oid=-221135691&id=456239325&hd=2&autoplay=1','Re:Zero — Сезон 1','История Субару Нацуки, который оказывается в новом мире и сталкивается с судьбой.', this)">Re:Zero — Сезон 1</button>
-    <button class="catalog-btn" onclick="switchAnime('https://vk.com/video_ext.php?oid=-220080671&id=456294073&hd=2&autoplay=1','Песнь ночных сов — Сезон 2','Продолжение приключений героев в мире загадочных ночных сов и тайн их ночного королевства.', this)">Песнь ночных сов — Сезон 2</button>
+    <div class="anime-list">
+      <div class="anime-item" data-src="https://vk.com/video_ext.php?oid=-221135691&id=456239325&hd=2&autoplay=1" 
+           data-title="Re:Zero — Сезон 1" 
+           data-desc="История Субару Нацуки, который оказывается в новом мире и сталкивается с судьбой.">
+        <div class="anime-preview">
+          <div class="anime-image" style="background-image: url('https://via.placeholder.com/200x300/6a55fa/ffffff?text=Re:Zero')"></div>
+          <button class="anime-like-btn"><i class="fa-solid fa-heart"></i></button>
+        </div>
+        <h3>Re:Zero — Сезон 1</h3>
+        <p>История Субару Нацуки в новом мире</p>
+        <button class="watch-btn" onclick="switchAnime(this.parentElement)">
+          <i class="fa-solid fa-play"></i> Смотреть
+        </button>
+      </div>
+      
+      <div class="anime-item" data-src="https://vk.com/video_ext.php?oid=-220080671&id=456294073&hd=2&autoplay=1" 
+           data-title="Песнь ночных сов — Сезон 2" 
+           data-desc="Продолжение приключений героев в мире загадочных ночных сов.">
+        <div class="anime-preview">
+          <div class="anime-image" style="background-image: url('https://via.placeholder.com/200x300/ff4d8d/ffffff?text=Песнь+сов')"></div>
+          <button class="anime-like-btn"><i class="fa-solid fa-heart"></i></button>
+        </div>
+        <h3>Песнь ночных сов — Сезон 2</h3>
+        <p>Продолжение приключений в мире ночных сов</p>
+        <button class="watch-btn" onclick="switchAnime(this.parentElement)">
+          <i class="fa-solid fa-play"></i> Смотреть
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Плеер -->
+  <div class="player-overlay" id="playerOverlay">
+    <div class="player-container">
+      <button class="close-player-btn" onclick="closePlayer()">&times;</button>
+      <div class="video-container">
+        <iframe id="playerFrame" allow="autoplay; encrypted-media; fullscreen" allowfullscreen></iframe>
+      </div>
+      <div class="player-info">
+        <div class="anime-info">
+          <div class="info-text">
+            <h3 class="anime-title" id="playerTitle"></h3>
+            <p class="anime-description" id="playerDescription"></p>
+          </div>
+          <button class="like-btn" id="playerLikeBtn"><i class="fa-solid fa-heart"></i></button>
+        </div>
+      </div>
+    </div>
   </div>
 
   <!-- Избранное -->
   <div class="catalog mobile" id="favorites">
     <button class="close-btn" onclick="toggleFavorites(false)">&times;</button>
     <h2 class="catalog-title">Избранное</h2>
-    <div id="favorites-list"></div>
+    <div id="favorites-list" class="favorites-list"></div>
   </div>
 
   <!-- История -->
   <div class="catalog mobile" id="history">
     <button class="close-btn" onclick="toggleHistory(false)">&times;</button>
     <h2 class="catalog-title">История просмотра</h2>
-    <div id="history-list"></div>
+    <div id="history-list" class="history-list"></div>
   </div>
 
   <!-- Профиль -->
@@ -116,7 +198,20 @@
       </div>
       
       <div class="stat-card">
-        <h3><i class="fa-solid fa-trophy"></i> Достижения</h3>
+        <h3><i class="fa-solid fa-trophy"></i> Прогресс уровня</h3>
+        <div class="level-display">
+          <div class="level-bar large">
+            <div class="level-progress" id="statLevelProgress"></div>
+          </div>
+          <div class="level-text">
+            <span>Уровень <span id="currentLevel">1</span></span>
+            <span><span id="currentXP">0</span>/1000 XP</span>
+          </div>
+        </div>
+      </div>
+      
+      <div class="stat-card">
+        <h3><i class="fa-solid fa-medal"></i> Достижения</h3>
         <div class="achievements-list" id="achievementsList">
           <!-- Достижения будут добавлены через JS -->
         </div>

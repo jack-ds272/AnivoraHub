@@ -2,7 +2,6 @@
 if (!localStorage.getItem('likedAnime')) localStorage.setItem('likedAnime', JSON.stringify({}));
 if (!localStorage.getItem('theme')) localStorage.setItem('theme', 'dark');
 if (!localStorage.getItem('historyAnime')) localStorage.setItem('historyAnime', JSON.stringify([]));
-if (!localStorage.getItem('lastAnime')) localStorage.setItem('lastAnime', '');
 if (!localStorage.getItem('userStats')) localStorage.setItem('userStats', JSON.stringify({
   level: 1,
   xp: 0,
@@ -12,7 +11,8 @@ if (!localStorage.getItem('userStats')) localStorage.setItem('userStats', JSON.s
   achievements: {
     first_watch: false,
     favorite: false,
-    hour_watched: false
+    hour_watched: false,
+    explorer: false
   }
 }));
 if (!localStorage.getItem('userProfile')) localStorage.setItem('userProfile', JSON.stringify({
@@ -39,6 +39,12 @@ const changeAvatarBtn = document.getElementById('changeAvatarBtn');
 const avatarInput = document.getElementById('avatarInput');
 const userAvatar = document.getElementById('userAvatar');
 const usernameInput = document.getElementById('usernameInput');
+const playerOverlay = document.getElementById('playerOverlay');
+const playerFrame = document.getElementById('playerFrame');
+const playerTitle = document.getElementById('playerTitle');
+const playerDescription = document.getElementById('playerDescription');
+const playerLikeBtn = document.getElementById('playerLikeBtn');
+const closePlayerBtn = document.querySelector('.close-player-btn');
 
 const catalog = document.getElementById('catalog');
 const favorites = document.getElementById('favorites');
@@ -51,15 +57,32 @@ const userLevelEl = document.getElementById('userLevel');
 const levelProgressEl = document.getElementById('levelProgress');
 const statLevelEl = document.getElementById('statLevel');
 const statLevelProgressEl = document.getElementById('statLevelProgress');
+const currentLevelEl = document.getElementById('currentLevel');
+const currentXpEl = document.getElementById('currentXP');
 const achievementsList = document.getElementById('achievementsList');
 const totalWatchedEl = document.getElementById('totalWatched');
 const totalFavoritesEl = document.getElementById('totalFavorites');
 const totalAnimeEl = document.getElementById('totalAnime');
 
-const iframe = document.querySelector('.video-container iframe');
-
-// Защита от быстрых многократных нажатий
+// Переменные
+let currentAnime = null;
 let isButtonCooldown = false;
+let watchTimer = null;
+
+// Инициализация
+document.addEventListener('DOMContentLoaded', () => {
+  setTimeout(() => {
+    showPreloader(false);
+    loadUserProfile();
+    updateUserStatsDisplay();
+    checkAchievements();
+    updateFavoritesList();
+    updateHistoryList();
+    initAnimeItems();
+  }, 1000);
+});
+
+// Защита от быстрых нажатий
 function buttonCooldown() {
   if (isButtonCooldown) return true;
   isButtonCooldown = true;
@@ -71,29 +94,17 @@ function buttonCooldown() {
 function showPreloader(show) {
   preloader.style.opacity = show ? '1' : '0';
   preloader.style.pointerEvents = show ? 'all' : 'none';
-  
-  if (!show) {
-    setTimeout(() => {
-      preloader.style.display = 'none';
-    }, 500);
-  }
+  if (!show) setTimeout(() => { preloader.style.display = 'none'; }, 500);
 }
 
-// Применяем тему
-function applyTheme(theme) {
-    document.body.className = theme === 'light' ? 'light' : '';
-    localStorage.setItem('theme', theme);
-}
-applyTheme(localStorage.getItem('theme'));
-
-// Загрузка профиля пользователя
+// Загрузка профиля
 function loadUserProfile() {
   const userProfile = JSON.parse(localStorage.getItem('userProfile'));
   userAvatar.src = userProfile.avatar;
   usernameInput.value = userProfile.username;
 }
 
-// Сохранение профиля пользователя
+// Сохранение профиля
 function saveUserProfile() {
   const userProfile = JSON.parse(localStorage.getItem('userProfile'));
   userProfile.username = usernameInput.value;
@@ -101,10 +112,7 @@ function saveUserProfile() {
 }
 
 // Смена аватарки
-changeAvatarBtn.addEventListener('click', () => {
-  avatarInput.click();
-});
-
+changeAvatarBtn.addEventListener('click', () => avatarInput.click());
 avatarInput.addEventListener('change', (e) => {
   const file = e.target.files[0];
   if (file) {
@@ -119,7 +127,7 @@ avatarInput.addEventListener('change', (e) => {
   }
 });
 
-// Сохранение имени пользователя
+// Сохранение имени
 usernameInput.addEventListener('blur', saveUserProfile);
 usernameInput.addEventListener('keypress', (e) => {
   if (e.key === 'Enter') {
@@ -128,7 +136,7 @@ usernameInput.addEventListener('keypress', (e) => {
   }
 });
 
-// Бургер меню
+// Навигация
 burgerMenu.addEventListener('click', () => {
   if (buttonCooldown()) return;
   burgerMenu.classList.toggle('active');
@@ -136,29 +144,11 @@ burgerMenu.addEventListener('click', () => {
   updateUserStatsDisplay();
 });
 
-// Мобильное меню
-mobileCatalogBtn.addEventListener('click', () => {
-  toggleCatalog(true);
-  mobileMenu.classList.remove('active');
-  burgerMenu.classList.remove('active');
-});
-
-mobileFavoritesBtn.addEventListener('click', () => {
-  toggleFavorites(true);
-  mobileMenu.classList.remove('active');
-  burgerMenu.classList.remove('active');
-});
-
-mobileHistoryBtn.addEventListener('click', () => {
-  toggleHistory(true);
-  mobileMenu.classList.remove('active');
-  burgerMenu.classList.remove('active');
-});
-
-mobileStatsBtn.addEventListener('click', () => {
-  toggleStats(true);
-  mobileMenu.classList.remove('active');
-  burgerMenu.classList.remove('active');
+[mobileCatalogBtn, mobileFavoritesBtn, mobileHistoryBtn, mobileStatsBtn].forEach(btn => {
+  btn.addEventListener('click', () => {
+    mobileMenu.classList.remove('active');
+    burgerMenu.classList.remove('active');
+  });
 });
 
 mobileThemeBtn.addEventListener('click', () => {
@@ -174,9 +164,9 @@ optionsBtn.addEventListener('click', () => {
 });
 
 document.addEventListener('click', (e) => {
-    if (!optionsPanel.contains(e.target) && !optionsBtn.contains(e.target)) {
-        optionsPanel.classList.remove('show');
-    }
+  if (!optionsPanel.contains(e.target) && !optionsBtn.contains(e.target)) {
+    optionsPanel.classList.remove('show');
+  }
 });
 
 themeBtn.addEventListener('click', () => {
@@ -184,42 +174,37 @@ themeBtn.addEventListener('click', () => {
   applyTheme(document.body.classList.contains('light') ? 'dark' : 'light');
 });
 
-statsBtn.addEventListener('click', () => {
-  if (buttonCooldown()) return;
-  toggleStats(true);
+[catalogBtn, favoritesBtn, historyBtn, statsBtn].forEach(btn => {
+  btn.addEventListener('click', () => optionsPanel.classList.remove('show'));
 });
 
-// Каталог, Избранное, История, Профиль
-catalogBtn.addEventListener('click', () => {
-  if (buttonCooldown()) return;
-  toggleCatalog(true);
-});
+// Тема
+function applyTheme(theme) {
+  document.body.className = theme === 'light' ? 'light' : '';
+  localStorage.setItem('theme', theme);
+}
+applyTheme(localStorage.getItem('theme'));
 
-favoritesBtn.addEventListener('click', () => {
-  if (buttonCooldown()) return;
-  toggleFavorites(true);
-});
+// Переключение разделов
+catalogBtn.addEventListener('click', () => toggleCatalog(true));
+favoritesBtn.addEventListener('click', () => toggleFavorites(true));
+historyBtn.addEventListener('click', () => toggleHistory(true));
+statsBtn.addEventListener('click', () => toggleStats(true));
 
-historyBtn.addEventListener('click', () => {
-  if (buttonCooldown()) return;
-  toggleHistory(true);
-});
+mobileCatalogBtn.addEventListener('click', () => toggleCatalog(true));
+mobileFavoritesBtn.addEventListener('click', () => toggleFavorites(true));
+mobileHistoryBtn.addEventListener('click', () => toggleHistory(true));
+mobileStatsBtn.addEventListener('click', () => toggleStats(true));
 
 function toggleCatalog(show) { 
   catalog.classList.toggle('active', show); 
-  if (show) {
-    favorites.classList.remove('active');
-    historyDiv.classList.remove('active');
-    statsPanel.classList.remove('active');
-  }
+  if (show) hideOtherPanels();
 }
 
 function toggleFavorites(show) { 
   favorites.classList.toggle('active', show); 
   if (show) {
-    catalog.classList.remove('active');
-    historyDiv.classList.remove('active');
-    statsPanel.classList.remove('active');
+    hideOtherPanels();
     updateFavoritesList();
   }
 }
@@ -227,9 +212,7 @@ function toggleFavorites(show) {
 function toggleHistory(show) { 
   historyDiv.classList.toggle('active', show); 
   if (show) {
-    catalog.classList.remove('active');
-    favorites.classList.remove('active');
-    statsPanel.classList.remove('active');
+    hideOtherPanels();
     updateHistoryList();
   }
 }
@@ -237,89 +220,135 @@ function toggleHistory(show) {
 function toggleStats(show) { 
   statsPanel.classList.toggle('active', show); 
   if (show) {
-    catalog.classList.remove('active');
-    favorites.classList.remove('active');
-    historyDiv.classList.remove('active');
+    hideOtherPanels();
     updateStatsPanel();
   }
 }
 
-function updateFavoritesList() {
-    const liked = JSON.parse(localStorage.getItem('likedAnime'));
-    favoritesList.innerHTML = '';
-    let favoriteCount = 0;
-    
-    for (let anime in liked) {
-        if (liked[anime]) {
-            favoriteCount++;
-            const btn = document.createElement('button');
-            btn.textContent = anime;
-            btn.className = 'catalog-btn';
-            btn.onclick = () => {
-              if (buttonCooldown()) return;
-              switchAnimeByTitle(anime);
-            };
-            favoritesList.appendChild(btn);
-        }
-    }
-    
-    // Обновляем счетчик в статистике
-    const userStats = JSON.parse(localStorage.getItem('userStats'));
-    userStats.totalFavorites = favoriteCount;
-    localStorage.setItem('userStats', JSON.stringify(userStats));
+function hideOtherPanels() {
+  [catalog, favorites, historyDiv, statsPanel].forEach(panel => {
+    if (panel !== this) panel.classList.remove('active');
+  });
 }
 
-function addToHistory(title) {
-    let history = JSON.parse(localStorage.getItem('historyAnime'));
-    if (!history.includes(title)) {
-        history.unshift(title);
-        if (history.length > 10) history.pop();
-        localStorage.setItem('historyAnime', JSON.stringify(history));
-        
-        // Обновляем счетчик просмотренных аниме
-        const userStats = JSON.parse(localStorage.getItem('userStats'));
-        userStats.totalAnimeWatched = history.length;
-        localStorage.setItem('userStats', JSON.stringify(userStats));
-        
-        // Проверяем достижения
-        checkAchievements();
+// Инициализация аниме-items
+function initAnimeItems() {
+  document.querySelectorAll('.anime-like-btn').forEach(btn => {
+    btn.addEventListener('click', function(e) {
+      e.stopPropagation();
+      const animeItem = this.closest('.anime-item');
+      const title = animeItem.querySelector('h3').textContent;
+      toggleLike(title, this);
+    });
+  });
+}
+
+// Лайки
+function toggleLike(title, btn = null) {
+  const liked = JSON.parse(localStorage.getItem('likedAnime'));
+  liked[title] = !liked[title];
+  localStorage.setItem('likedAnime', JSON.stringify(liked));
+  
+  if (btn) {
+    btn.classList.toggle('liked', liked[title]);
+    btn.innerHTML = `<i class="fa-solid fa-heart${liked[title] ? '' : ''}"></i>`;
+  }
+  
+  if (playerLikeBtn && currentAnime === title) {
+    playerLikeBtn.classList.toggle('liked', liked[title]);
+  }
+  
+  updateFavoritesList();
+  checkAchievements();
+}
+
+// Обновление избранного
+function updateFavoritesList() {
+  const liked = JSON.parse(localStorage.getItem('likedAnime'));
+  favoritesList.innerHTML = '';
+  let favoriteCount = 0;
+  
+  for (let anime in liked) {
+    if (liked[anime]) {
+      favoriteCount++;
+      const animeItem = createAnimeItem(anime, liked[anime]);
+      favoritesList.appendChild(animeItem);
     }
+  }
+  
+  if (favoriteCount === 0) {
+    favoritesList.innerHTML = '<p style="text-align: center; color: #666; padding: 20px;">Здесь пока пусто</p>';
+  }
+  
+  // Обновляем счетчик
+  const userStats = JSON.parse(localStorage.getItem('userStats'));
+  userStats.totalFavorites = favoriteCount;
+  localStorage.setItem('userStats', JSON.stringify(userStats));
+}
+
+// История
+function addToHistory(title) {
+  let history = JSON.parse(localStorage.getItem('historyAnime'));
+  if (!history.includes(title)) {
+    history.unshift(title);
+    if (history.length > 10) history.pop();
+    localStorage.setItem('historyAnime', JSON.stringify(history));
+    
+    const userStats = JSON.parse(localStorage.getItem('userStats'));
+    userStats.totalAnimeWatched = new Set(history).size;
+    localStorage.setItem('userStats', JSON.stringify(userStats));
+    
+    checkAchievements();
+  }
 }
 
 function updateHistoryList() {
-    const history = JSON.parse(localStorage.getItem('historyAnime'));
-    historyList.innerHTML = '';
-    history.forEach(title => {
-        const btn = document.createElement('button');
-        btn.textContent = title;
-        btn.className = 'catalog-btn';
-        btn.onclick = () => {
-          if (buttonCooldown()) return;
-          switchAnimeByTitle(title);
-        };
-        historyList.appendChild(btn);
-    });
+  const history = JSON.parse(localStorage.getItem('historyAnime'));
+  historyList.innerHTML = '';
+  
+  if (history.length === 0) {
+    historyList.innerHTML = '<p style="text-align: center; color: #666; padding: 20px;">Здесь пока пусто</p>';
+    return;
+  }
+  
+  history.forEach(title => {
+    const animeItem = createAnimeItem(title, false);
+    historyList.appendChild(animeItem);
+  });
 }
 
-// Система пользовательской статистики и уровней
+function createAnimeItem(title, isLiked) {
+  const item = document.createElement('div');
+  item.className = 'anime-item';
+  item.innerHTML = `
+    <h3>${title}</h3>
+    <button class="watch-btn" onclick="openAnime('${title}')">
+      <i class="fa-solid fa-play"></i> Смотреть
+    </button>
+  `;
+  return item;
+}
+
+// Система уровней
 function addUserXp(amount) {
   const userStats = JSON.parse(localStorage.getItem('userStats'));
+  const oldLevel = userStats.level;
+  
   userStats.xp += amount;
   userStats.totalWatchTime += amount;
   
-  // Проверка повышения уровня (1000 XP за уровень)
+  // Проверка уровня
   if (userStats.xp >= 1000) {
-    userStats.level += 1;
+    userStats.level = Math.floor(userStats.xp / 1000) + 1;
     userStats.xp = userStats.xp % 1000;
     
-    // Показываем уведомление о новом уровне
-    showLevelUpNotification(userStats.level);
+    if (userStats.level > oldLevel) {
+      showLevelUpNotification(userStats.level);
+    }
   }
   
   localStorage.setItem('userStats', JSON.stringify(userStats));
   updateUserStatsDisplay();
-  
-  // Проверяем достижения
   checkAchievements();
 }
 
@@ -327,76 +356,76 @@ function updateUserStatsDisplay() {
   const userStats = JSON.parse(localStorage.getItem('userStats'));
   const progressPercent = (userStats.xp / 1000) * 100;
   
-  // Обновляем элементы интерфейса
-  if (userLevelEl) userLevelEl.textContent = userStats.level;
-  if (levelProgressEl) levelProgressEl.style.width = `${progressPercent}%`;
-  if (statLevelEl) statLevelEl.textContent = userStats.level;
-  if (statLevelProgressEl) statLevelProgressEl.style.width = `${progressPercent}%`;
+  // Обновляем элементы
+  [userLevelEl, statLevelEl, currentLevelEl].forEach(el => {
+    if (el) el.textContent = userStats.level;
+  });
   
-  // Обновляем статистику
+  [levelProgressEl, statLevelProgressEl].forEach(el => {
+    if (el) el.style.width = `${progressPercent}%`;
+  });
+  
+  if (currentXpEl) currentXpEl.textContent = Math.floor(userStats.xp);
   if (totalWatchedEl) totalWatchedEl.textContent = Math.floor(userStats.totalWatchTime / 60);
   if (totalFavoritesEl) totalFavoritesEl.textContent = userStats.totalFavorites;
   if (totalAnimeEl) totalAnimeEl.textContent = userStats.totalAnimeWatched;
 }
 
 function showLevelUpNotification(level) {
-  // Создаем уведомление о повышении уровня
   const notification = document.createElement('div');
   notification.className = 'level-up-notification';
   notification.innerHTML = `
     <div class="notification-content">
       <i class="fa-solid fa-trophy"></i>
-      <h3>Поздравляем!</h3>
+      <h3>Новый уровень!</h3>
       <p>Вы достигли ${level} уровня!</p>
     </div>
   `;
   
   document.body.appendChild(notification);
-  
-  // Удаляем уведомление через 5 секунд
-  setTimeout(() => {
-    notification.remove();
-  }, 5000);
+  setTimeout(() => notification.remove(), 3000);
 }
 
-// Система достижений
+// Достижения
 function checkAchievements() {
   const userStats = JSON.parse(localStorage.getItem('userStats'));
   const history = JSON.parse(localStorage.getItem('historyAnime'));
+  const liked = JSON.parse(localStorage.getItem('likedAnime'));
   
-  // Первый просмотр
-  if (history.length > 0 && !userStats.achievements.first_watch) {
-    userStats.achievements.first_watch = true;
-    addUserXp(50); // Бонус за достижение
+  const achievements = {
+    first_watch: history.length > 0,
+    favorite: Object.values(liked).some(l => l),
+    hour_watched: userStats.totalWatchTime >= 3600,
+    explorer: new Set(history).size >= 3
+  };
+  
+  let earnedXp = 0;
+  Object.entries(achievements).forEach(([key, achieved]) => {
+    if (achieved && !userStats.achievements[key]) {
+      userStats.achievements[key] = true;
+      earnedXp += 50;
+    }
+  });
+  
+  if (earnedXp > 0) {
+    addUserXp(earnedXp);
+    localStorage.setItem('userStats', JSON.stringify(userStats));
   }
-  
-  // Добавление в избранное
-  if (userStats.totalFavorites > 0 && !userStats.achievements.favorite) {
-    userStats.achievements.favorite = true;
-    addUserXp(30); // Бонус за достижение
-  }
-  
-  // Час просмотра
-  if (userStats.totalWatchTime >= 3600 && !userStats.achievements.hour_watched) {
-    userStats.achievements.hour_watched = true;
-    addUserXp(100); // Бонус за достижение
-  }
-  
-  localStorage.setItem('userStats', JSON.stringify(userStats));
 }
 
 function updateAchievementsDisplay() {
   const achievements = [
     { id: 'first_watch', name: 'Первый просмотр', icon: 'fa-play', description: 'Посмотрите первое аниме' },
-    { id: 'favorite', name: 'В избранном', icon: 'fa-heart', description: 'Добавьте аниме в избранное' },
-    { id: 'hour_watched', name: 'Час просмотра', icon: 'fa-clock', description: 'Посмотрите 1 час аниме' }
+    { id: 'favorite', name: 'Фанат', icon: 'fa-heart', description: 'Добавьте аниме в избранное' },
+    { id: 'hour_watched', name: 'Киноман', icon: 'fa-clock', description: 'Посмотрите 1 час аниме' },
+    { id: 'explorer', name: 'Исследователь', icon: 'fa-compass', description: 'Посмотрите 3+ разных аниме' }
   ];
   
   const userStats = JSON.parse(localStorage.getItem('userStats'));
   achievementsList.innerHTML = '';
   
   achievements.forEach(achievement => {
-    const achieved = userStats.achievements && userStats.achievements[achievement.id];
+    const achieved = userStats.achievements[achievement.id];
     const achievementEl = document.createElement('div');
     achievementEl.className = `achievement ${achieved ? '' : 'locked'}`;
     achievementEl.innerHTML = `
@@ -409,135 +438,120 @@ function updateAchievementsDisplay() {
   });
 }
 
+// Плеер
+function switchAnime(animeElement) {
+  const src = animeElement.dataset.src;
+  const title = animeElement.dataset.title;
+  const desc = animeElement.dataset.desc;
+  
+  currentAnime = title;
+  playerFrame.src = src;
+  playerTitle.textContent = title;
+  playerDescription.textContent = desc;
+  
+  // Обновляем лайк
+  const liked = JSON.parse(localStorage.getItem('likedAnime'));
+  playerLikeBtn.classList.toggle('liked', liked[title]);
+  
+  // Показываем плеер
+  playerOverlay.classList.add('active');
+  
+  // Добавляем в историю и начисляем XP
+  addToHistory(title);
+  addUserXp(10);
+  
+  // Запускаем таймер просмотра
+  startWatchTimer();
+}
+
+function openAnime(title) {
+  const animeItem = document.querySelector(`.anime-item h3:contains("${title}")`)?.closest('.anime-item');
+  if (animeItem) switchAnime(animeItem);
+}
+
+function closePlayer() {
+  playerOverlay.classList.remove('active');
+  playerFrame.src = '';
+  stopWatchTimer();
+}
+
+playerLikeBtn.addEventListener('click', () => {
+  if (currentAnime) {
+    toggleLike(currentAnime);
+  }
+});
+
+function startWatchTimer() {
+  stopWatchTimer();
+  watchTimer = setInterval(() => {
+    addUserXp(1); // 1 XP за секунду просмотра
+  }, 1000);
+}
+
+function stopWatchTimer() {
+  if (watchTimer) {
+    clearInterval(watchTimer);
+    watchTimer = null;
+  }
+}
+
+// Обновление статистики
 function updateStatsPanel() {
   updateUserStatsDisplay();
   updateAchievementsDisplay();
 }
 
-// Плавная анимация переключения видео и текста
-function switchAnime(url, title, desc, btn) {
-  showPreloader(true);
-  
-  iframe.classList.remove('show');
-
-  setTimeout(() => {
-      iframe.src = url;
-      
-      iframe.onload = () => {
-        iframe.classList.add('show');
-        showPreloader(false);
-        
-        // Добавляем в историю и начисляем XP
-        addToHistory(title);
-        addUserXp(10); // XP за начало просмотра
-        
-        // Отмечаем первое аниме как просмотренное
-        const userStats = JSON.parse(localStorage.getItem('userStats'));
-        if (userStats.totalAnimeWatched === 0) {
-          userStats.totalAnimeWatched = 1;
-          localStorage.setItem('userStats', JSON.stringify(userStats));
-          checkAchievements();
-        }
-      };
-      
-      document.querySelectorAll('.catalog-btn').forEach(b => b.classList.remove('active'));
-      if (btn) btn.classList.add('active');
-
-      toggleCatalog(false);
-      toggleFavorites(false);
-      toggleHistory(false);
-      statsPanel.classList.remove('active');
-
-      localStorage.setItem('lastAnime', title);
-  }, 300);
-}
-
-function switchAnimeByTitle(title) {
-    const buttons = document.querySelectorAll('.catalog-btn');
-    buttons.forEach(b => {
-        if (b.innerText === title) { 
-          b.click(); 
-        }
-    });
-}
-
-// Свайп жесты для мобильных устройств
+// Свайп жесты
 let touchStartX = 0;
-let touchEndX = 0;
-
 document.addEventListener('touchstart', e => {
   touchStartX = e.changedTouches[0].screenX;
 }, { passive: true });
 
 document.addEventListener('touchend', e => {
-  touchEndX = e.changedTouches[0].screenX;
-  handleSwipe();
+  const touchEndX = e.changedTouches[0].screenX;
+  handleSwipe(touchEndX);
 }, { passive: true });
 
-function handleSwipe() {
+function handleSwipe(touchEndX) {
   const swipeThreshold = 50;
   
-  // Свайп слева направо для открытия меню
   if (touchEndX > touchStartX + swipeThreshold && touchStartX < 50) {
     burgerMenu.classList.add('active');
     mobileMenu.classList.add('active');
-    updateUserStatsDisplay();
   }
   
-  // Свайп справа налево для закрытия меню
-  if (touchStartX > touchEndX + swipeThreshold && mobileMenu.classList.contains('active')) {
-    burgerMenu.classList.remove('active');
-    mobileMenu.classList.remove('active');
-  }
-  
-  // Свайп справа налево для закрытия панелей
-  if (touchStartX > touchEndX + swipeThreshold && 
-      (catalog.classList.contains('active') || 
-       favorites.classList.contains('active') || 
-       historyDiv.classList.contains('active') ||
-       statsPanel.classList.contains('active'))) {
-    toggleCatalog(false);
-    toggleFavorites(false);
-    toggleHistory(false);
-    toggleStats(false);
+  if (touchStartX > touchEndX + swipeThreshold) {
+    if (mobileMenu.classList.contains('active')) {
+      burgerMenu.classList.remove('active');
+      mobileMenu.classList.remove('active');
+    }
+    hideAllPanels();
   }
 }
 
-// Инициализация
-document.addEventListener('DOMContentLoaded', () => {
-  // Скрываем прелоадер после загрузки страницы
-  setTimeout(() => {
-    showPreloader(false);
-    iframe.classList.add('show');
-    
-    // Загружаем профиль пользователя
-    loadUserProfile();
-    
-    // Обновляем статистику пользователя
-    updateUserStatsDisplay();
-    
-    // Проверяем достижения
-    checkAchievements();
-  }, 1000);
-});
+function hideAllPanels() {
+  [catalog, favorites, historyDiv, statsPanel, playerOverlay].forEach(panel => {
+    panel.classList.remove('active');
+  });
+}
 
-// Предотвращение масштабирования на мобильных устройствах
+// Предотвращение масштабирования
 document.addEventListener('touchstart', function(event) {
-  if (event.touches.length > 1) {
-    event.preventDefault();
-  }
+  if (event.touches.length > 1) event.preventDefault();
 }, { passive: false });
 
 let lastTouchEnd = 0;
 document.addEventListener('touchend', function(event) {
-  const now = (new Date()).getTime();
-  if (now - lastTouchEnd <= 300) {
-    event.preventDefault();
-  }
+  const now = Date.now();
+  if (now - lastTouchEnd <= 300) event.preventDefault();
   lastTouchEnd = now;
 }, { passive: false });
 
-// Отключаем масштабирование на Android
 document.addEventListener('gesturestart', function(e) {
   e.preventDefault();
 });
+
+// Вспомогательная функция для поиска по тексту
+Element.prototype.contains = function(text) {
+  return this.textContent.includes(text);
+};
