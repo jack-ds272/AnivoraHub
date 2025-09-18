@@ -1,20 +1,16 @@
-// Инициализация localStorage
-if (!localStorage.getItem('likedAnime')) localStorage.setItem('likedAnime', JSON.stringify({}));
-if (!localStorage.getItem('theme')) localStorage.setItem('theme', 'dark');
-if (!localStorage.getItem('historyAnime')) localStorage.setItem('historyAnime', JSON.stringify([]));
-if (!localStorage.getItem('userStats')) localStorage.setItem('userStats', JSON.stringify({
-  level: 1,
-  xp: 0,
-  totalWatchTime: 0,
-  totalFavorites: 0,
-  totalAnimeWatched: 0,
-  achievements: {
-    first_watch: false,
-    favorite: false,
-    hour_watched: false,
-    explorer: false
-  }
-}));
+// Инициализация аниме-items
+function initAnimeItems() {
+  document.querySelectorAll('.anime-like-btn').forEach(btn => {
+    btn.addEventListener('click', function(e) {
+      e.stopPropagation();
+      const animeItem = this.closest('.anime-item');
+      if (animeItem) {
+        const title = animeItem.querySelector('h3')?.textContent;
+        if (title) toggleLike(title, this);
+      }
+    });
+  });
+}
 if (!localStorage.getItem('userProfile')) localStorage.setItem('userProfile', JSON.stringify({
   username: 'Аниме-любитель',
   avatar: 'https://via.placeholder.com/100'
@@ -725,3 +721,139 @@ window.toggleHistory = toggleHistory;
 window.switchAnime = switchAnime;
 window.openAnime = openAnime;
 window.closePlayer = closePlayer;
+// ... весь ваш существующий код ...
+
+// === ДОБАВЬТЕ ЭТО В КОНЕЦ ФАЙЛА === //
+
+// Инициализация превью для новых аниме
+function initNewAnimePreviews() {
+  const animeItems = document.querySelectorAll('.anime-item');
+  
+  animeItems.forEach((item, index) => {
+    const imageDiv = item.querySelector('.anime-image');
+    if (imageDiv && imageDiv.style.backgroundImage.includes('placeholder.com')) {
+      const title = item.querySelector('h3')?.textContent || 'Аниме';
+      const colors = [
+        ['#6a55fa', '#ff4d8d'],
+        ['#ff4d8d', '#6a55fa'], 
+        ['#4CAF50', '#8BC34A'],
+        ['#9C27B0', '#E91E63']
+      ];
+      
+      if (colors[index]) {
+        imageDiv.style.background = `linear-gradient(135deg, ${colors[index][0]}, ${colors[index][1]})`;
+        imageDiv.innerHTML = `<div style="display: flex; align-items: center; justify-content: center; height: 100%; color: white; font-weight: bold; font-size: 16px; text-align: center; padding: 10px;">${title}</div>`;
+      }
+    }
+  });
+}
+
+// Функция для получения данных аниме по названию
+function getAnimeData(title) {
+  const animeData = {
+    'Re:Zero — Сезон 1': {
+      src: 'https://vk.com/video_ext.php?oid=-221135691&id=456239325&hd=2&autoplay=1',
+      desc: 'История Субару Нацуки, который оказывается в новом мире и сталкивается с судьбой.'
+    },
+    'Песнь ночных сов — Сезон 2': {
+      src: 'https://vk.com/video_ext.php?oid=-220080671&id=456294073&hd=2&autoplay=1',
+      desc: 'Продолжение приключений героев в мире загадочных ночных сов.'
+    },
+    'Магическая битва': {
+      src: 'https://vk.com/video_ext.php?oid=-195770675&id=456239204&hd=2&autoplay=1',
+      desc: 'Юдзи Итадори вступает в мир магии и проклятий, чтобы спасти человечество.'
+    },
+    'Песнь Эльфии': {
+      src: 'https://vk.com/video_ext.php?oid=-195770675&id=456239204&hd=2&autoplay=1',
+      desc: 'Эпическое приключение в мире эльфов, магии и древних легенд.'
+    }
+  };
+  
+  return animeData[title] || { src: '', desc: 'Описание отсутствует' };
+}
+
+// Обновленная функция создания элемента аниме
+function createAnimeItem(title, isLiked) {
+  const item = document.createElement('div');
+  item.className = 'anime-item';
+  
+  let gradientColors = ['#6a55fa', '#ff4d8d'];
+  if (title.includes('Магическая битва')) gradientColors = ['#4CAF50', '#8BC34A'];
+  if (title.includes('Песнь Эльфии')) gradientColors = ['#9C27B0', '#E91E63'];
+  
+  item.innerHTML = `
+    <div class="anime-preview">
+      <div class="anime-image" style="background: linear-gradient(135deg, ${gradientColors[0]}, ${gradientColors[1]}); display: flex; align-items: center; justify-content: center; color: white; font-weight: bold;">
+        ${title}
+      </div>
+      <button class="anime-like-btn ${isLiked ? 'liked' : ''}">
+        <i class="fa-solid fa-heart"></i>
+      </button>
+    </div>
+    <h3>${title}</h3>
+    <button class="watch-btn" onclick="openAnime('${title.replace(/'/g, "\\'")}')">
+      <i class="fa-solid fa-play"></i> Смотреть
+    </button>
+  `;
+  
+  const likeBtn = item.querySelector('.anime-like-btn');
+  likeBtn.addEventListener('click', function(e) {
+    e.stopPropagation();
+    toggleLike(title, this);
+  });
+  
+  return item;
+}
+
+// Обновленная функция переключения аниме
+function switchAnime(animeElement) {
+  try {
+    const title = animeElement.querySelector('h3')?.textContent;
+    if (!title) return;
+    
+    const animeData = getAnimeData(title);
+    const src = animeData.src;
+    const desc = animeData.desc;
+    
+    currentAnime = title;
+    
+    if (fullscreenTitle) fullscreenTitle.textContent = title;
+    if (fullscreenAnimeTitle) fullscreenAnimeTitle.textContent = title;
+    if (fullscreenAnimeDesc) fullscreenAnimeDesc.textContent = desc;
+    
+    const liked = JSON.parse(localStorage.getItem('likedAnime') || '{}');
+    if (fullscreenLikeBtn) {
+      fullscreenLikeBtn.classList.toggle('liked', liked[title]);
+    }
+    
+    if (mainScreen) mainScreen.classList.add('hidden');
+    if (playerScreen) playerScreen.classList.remove('hidden');
+    
+    if (playerFrame) {
+      playerFrame.src = src;
+    }
+    
+    addToHistory(title);
+    addUserXp(10);
+    
+    startWatchTimer();
+  } catch (e) {
+    console.error('Ошибка переключения аниме:', e);
+  }
+}
+
+// Обновленная инициализация после загрузки DOM
+document.addEventListener('DOMContentLoaded', () => {
+  setTimeout(() => {
+    showPreloader(false);
+    loadUserProfile();
+    updateUserStatsDisplay();
+    checkAchievements();
+    updateFavoritesList();
+    updateHistoryList();
+    initAnimeItems();
+    initNewAnimePreviews(); // Добавлен вызов новой функции
+    initEventListeners();
+    applyTheme(localStorage.getItem('theme') || 'dark');
+  }, 1000);
+});
